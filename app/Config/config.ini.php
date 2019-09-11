@@ -42,9 +42,45 @@ $config->set("mysql.default", [
         'max_idle_time'   => 60,
     ],
 ]);
+
+$config->set("redisconnection.default", [
+    'persistent' => true,
+    'host'       => 'redis',
+    'port'       => 6379,
+    'timeout'    => 3,
+    'ttl'        => 0,
+    'pool'       => [
+        'min_connections' => 1,
+        'max_connections' => 10,
+        'connect_timeout' => 10.0,
+        'wait_timeout'    => 3.0,
+        'heartbeat'       => -1,
+        'max_idle_time'   => 60,
+    ],
+]);
+// orm注入配置
 $config->set("db", [
-    'class'    => '\sf\db\Db',
+    'class'    => \sf\db\Db::class,
     'params'   => [],
     'instance' => true,
+]);
+// 缓存类注入配置
+$config->set("redis", [
+    'class'    => \sf\redis\RedisServer::class,
+    'params'   => [
+        'poolName' => 'default',
+    ],
+    'instance' => false,
+]);
+
+//框架方法级缓存模块注入配置
+$config->set("cache", [
+    'class'    => '\Gene\Cache\Cache',
+    'params'   => [[
+        'hook'        => 'redis',
+        'sign'        => 'web:',
+        'versionSign' => 'database:',
+    ]],
+    'instance' => false,
 ]);
 

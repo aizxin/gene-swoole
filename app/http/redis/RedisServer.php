@@ -10,13 +10,13 @@
  * @date  : 2019-08-31 21:16
  */
 
-namespace sf\db;
+namespace sf\redis;
 
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
-use sf\db\pool\PoolFactory;
+use sf\redis\pool\PoolFactory;
 
-class Db
+class RedisServer
 {
     /**
      * @var PoolFactory
@@ -29,8 +29,9 @@ class Db
 
     protected $container;
 
-    public function __construct()
+    public function __construct($poolName = 'default')
     {
+        $this->poolName = $poolName;
         $this->container = ApplicationContext::getContainer();
         $this->factory = $this->container->make(PoolFactory::class, ['container' => $this->container]);
     }
@@ -57,7 +58,7 @@ class Db
         if ($hasContextConnection) {
             $connection = Context::get($this->getContextKey());
         }
-        if ( ! $connection instanceof DbConnection) {
+        if ( ! $connection instanceof RedisConnection) {
             $pool = $this->factory->getPool($this->poolName);
             $connection = $pool->get()->getConnection();
             // Should storage the connection to coroutine context, then use defer() to release the connection.

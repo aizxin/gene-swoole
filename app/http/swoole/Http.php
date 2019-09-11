@@ -160,8 +160,10 @@ class Http extends Server
         try {
             $this->app->run($method, $uri);
         } catch (\Exception $exception) {
+            var_dump($exception->getMessage());
             return $response->end(400);
         } catch (\Throwable $exception) {
+            var_dump($exception->getMessage());
             return $response->end(400);
         }
     }

@@ -17,9 +17,8 @@ export default {
         async getLoginToken({ commit }, params) {
             return new Promise((resolve, reject) => {
                 getLogin(params).then(res => {
-                    console.log('login', res)
                     if (res && res.data.token) {
-                        cache.setToken(res.token)
+                        cache.setToken(res.data.token)
                         resolve(res)
                     } else {
                         reject(new Error('nothing login data'))
@@ -34,8 +33,7 @@ export default {
             return new Promise((resolve, reject) => {
                 let token = cache.getToken()
                 getUser(token).then(res => {
-                    // console.log('user', res)
-                    if (res.data) {
+                    if (res.code === 2000) {
                         commit('SET_USER', res.data)
                         resolve(res.data)
                     } else {

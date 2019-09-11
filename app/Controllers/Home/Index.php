@@ -18,6 +18,6 @@ class Index extends Controller
 {
     public function index()
     {
-        return $this->response->withContent('home')->send();
+        return $this->successResponse();
     }
 }

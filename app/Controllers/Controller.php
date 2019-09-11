@@ -27,12 +27,29 @@ class Controller extends \Gene\Controller
 
     public function error401()
     {
-        var_dump($this->request->getParsedBody());
         return $this->response->getSwooleResponse()->end('401');
     }
 
     public function error404()
     {
         return $this->response->getSwooleResponse()->end('404');
+    }
+
+    public function errorResponse($msg = 'error', $code = 4000)
+    {
+        return $this->response([], $msg, $code);
+    }
+
+    public function successResponse($msg = 'success', $data = [])
+    {
+        return $this->response($data, $msg);
+    }
+
+    public function response($data = [], $msg = 'ok', $code = 2000)
+    {
+        $return = static::success($msg, $code);
+        $return['data'] = $data;
+
+        return $this->response->withContent(json_encode($return))->send();
     }
 }
