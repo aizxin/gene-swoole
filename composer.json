@@ -1,0 +1,24 @@
+{
+    "name": "aizxin/gene-swoole",
+    "authors": [
+        {
+            "name": "aizxin",
+            "email": "aizxin@gmail.com"
+        }
+    ],
+    "require": {
+        "hyperf/http-message": "^1.0",
+        "hyperf/pool": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "sf\\": "app/http"
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
+    }
+}

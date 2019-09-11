@@ -1,0 +1,19 @@
+// 主色调
+$appColor = #409EFF;
+$appColorRGB = 64,158,255;
+// 水平垂直居中
+flex-center() {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+// 单行溢出省略号
+text-ellipsis() {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+:export {
+    appColor: $appColor;
+    appColorRGB: $appColorRGB;
+}
