@@ -17,6 +17,5 @@ class TestListener
 {
     public function handle($event)
     {
-        var_dump(time());
     }
 }
