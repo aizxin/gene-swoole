@@ -27,8 +27,8 @@ $router->clear()
         echo 122;
     });
 
-$router::runError(404);
-//   $router->run('get', $argv[1] ?? '/');
+//$router::runError(404);
+   $router->run('get', $argv[1] ?? '/');
 
 //
 //class Route extends HTTPRouter {

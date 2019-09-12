@@ -3,6 +3,10 @@ $config = new \gene\config();
 $config->clear();
 \Gene\Di::set(\Hyperf\Contract\ConfigInterface::class, $config);
 
+$config->set("app", [
+    'log_path' => BASE_PATH . "/runtime",
+]);
+
 $config->set("server", [
     "host"                       => "0.0.0.0"
     , "port"                     => 9501
@@ -13,7 +17,7 @@ $config->set("server", [
     , "dispatch_mode"            => 3
     , "open_tcp_nodelay"         => true
     , "pid_file"                 => BASE_PATH . "/runtime/swoole_server.pid"
-    , "log_file"                 => BASE_PATH . "/runtime/swoole_http_server.log"
+//    , "log_file"                 => BASE_PATH . "/runtime/swoole_http_server.log"
     , "heartbeat_check_interval" => 660
     , "heartbeat_idle_time"      => 1200
     , "trace_event_worker"       => true
@@ -75,12 +79,26 @@ $config->set("redis", [
 
 //框架方法级缓存模块注入配置
 $config->set("cache", [
-    'class'    => '\Gene\Cache\Cache',
+    'class'    => \Gene\Cache\Cache::class,
     'params'   => [[
         'hook'        => 'redis',
         'sign'        => 'web:',
         'versionSign' => 'database:',
     ]],
     'instance' => false,
+]);
+
+// 注入log
+$config->set("log", [
+    'class'    => \sf\Log::class,
+    'params'   => [],
+    'instance' => false,
+]);
+
+// 监听
+$config->set("listener", [
+    'swoole.Process' => [
+        \sf\listener\TestListener::class,
+    ]
 ]);
 

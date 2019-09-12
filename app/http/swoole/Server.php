@@ -68,7 +68,7 @@ abstract class Server
      * 支持的响应事件
      * @var array
      */
-    protected $event = ['Start', 'Shutdown', 'WorkerStart', 'WorkerStop', 'WorkerExit', 'Connect', 'Receive', 'Packet', 'Close', 'BufferFull', 'BufferEmpty', 'Task', 'Finish', 'PipeMessage', 'WorkerError', 'ManagerStart', 'ManagerStop', 'Open', 'Message', 'HandShake', 'Request'];
+    protected $eventOn = ['Start', 'Shutdown', 'WorkerStart', 'WorkerStop', 'WorkerExit', 'Connect', 'Receive', 'Packet', 'Close', 'BufferFull', 'BufferEmpty', 'Task', 'Finish', 'PipeMessage', 'WorkerError', 'ManagerStart', 'ManagerStop', 'Open', 'Message', 'HandShake', 'Request'];
 
     /**
      * 架构函数
@@ -94,7 +94,7 @@ abstract class Server
         }
 
         // 设置回调
-        foreach ($this->event as $event) {
+        foreach ($this->eventOn as $event) {
             if (method_exists($this, 'on' . $event)) {
                 $this->swoole->on($event, [$this, 'on' . $event]);
             }
@@ -102,9 +102,6 @@ abstract class Server
 
         // 初始化
         $this->init();
-
-        // 启动服务
-        $this->swoole->start();
         
     }
 

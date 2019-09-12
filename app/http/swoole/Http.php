@@ -12,6 +12,10 @@
 
 namespace sf\swoole;
 
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\ApplicationContext;
+use sf\Event;
+use sf\Log;
 use Swoole\Runtime;
 use Swoole\WebSocket\Server as WebSocketServer;
 use Swoole\Http\Server as HttpServer;
@@ -28,6 +32,9 @@ class Http extends Server
     protected $lastMtime;
     protected $option = [];
     protected $app;
+    protected $container;
+    protected $event;
+    protected $log;
 
     /**
      * 架构函数
@@ -57,6 +64,19 @@ class Http extends Server
     public function getSwoole()
     {
         $this->run();
+
+        $this->container = ApplicationContext::getContainer();
+        $this->event = $this->container->make(Event::class);
+
+        $config = $this->container->get(ConfigInterface::class);
+
+        $this->event->bind($config->get('bind') ?? [])
+            ->listenEvents($config->get('listener') ?? [])
+            ->trigger('swoole.Process',$this->swoole);
+
+        $this->container->make('app',$this->app);
+
+        $this->log = $this->container->make(Log::class);
 
         return $this->swoole;
     }
@@ -89,7 +109,7 @@ class Http extends Server
             $this->swoole->set($option);
         }
 
-        foreach ($this->event as $event) {
+        foreach ($this->eventOn as $event) {
             // 自定义回调
             if ( ! empty($option[ $event ])) {
                 $this->swoole->on($event, $option[ $event ]);
@@ -160,10 +180,10 @@ class Http extends Server
         try {
             $this->app->run($method, $uri);
         } catch (\Exception $exception) {
-            var_dump($exception->getMessage());
+            $this->log->error($exception->getMessage());
             return $response->end(400);
         } catch (\Throwable $exception) {
-            var_dump($exception->getMessage());
+            $this->log->error($exception->getMessage());
             return $response->end(400);
         }
     }
