@@ -12,6 +12,7 @@
 
 namespace sf\swoole;
 
+use Gene\Application;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\ApplicationContext;
 use sf\Event;
@@ -74,7 +75,7 @@ class Http extends Server
             ->listenEvents($config->get('listener') ?? [])
             ->trigger('swoole.Process',$this->swoole);
 
-        $this->container->make('app',$this->app);
+        $this->container->make(Application::class,$this->app);
 
         $this->log = $this->container->make(Log::class);
 
@@ -166,16 +167,19 @@ class Http extends Server
 
         $response->header('Content-Type', 'application/json; charset=utf-8');
         $response->header('Access-Control-Allow-Origin', '*');
-        $response->header('Access-Control-Allow-Methods', 'GET, POST');
+        $response->header('Access-Control-Allow-Methods', '*');
         $response->header('Access-Control-Allow-Credentials', 'true');
         $response->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
 
         if ($method == 'OPTIONS' || $uri == '/favicon.ico') {
+            $response->status(40400);
             return $response->end(400);
         }
 
         Context::set('request', Psr7Request::loadFromSwooleRequest($request));
         Context::set('response', new Psr7Response($response));
+
+        \Gene\Request::init($request->get, $request->post, $request->cookie, $request->server, null, $request->files);
 
         try {
             $this->app->run($method, $uri);

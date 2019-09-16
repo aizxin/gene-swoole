@@ -13,6 +13,7 @@
 namespace sf;
 
 
+use Gene\Application;
 use Hyperf\Contract\ConfigInterface;
 
 class Log
@@ -23,8 +24,9 @@ class Log
     {
         $config = make(ConfigInterface::class);
         $this->log = make(\SeasLog::class);
-        $this->log->setLogger('log/'.date('Ym'));
+        $this->setLogger();
         $this->log->setBasePath($config->get('app.log_path') ?? BASE_PATH . '/runtime');
+
     }
 
     public function __call($name, $arguments)
@@ -32,8 +34,10 @@ class Log
         return $this->log->{$name}(...$arguments);
     }
 
-    public function setLogger($path = 'log'){
-        $this->log->setLogger($path.'/'.date('Ym'));
+    public function setLogger($path = 'log')
+    {
+        $this->log->setLogger($path . '/' . date('Ym'));
+
         return $this;
     }
 }

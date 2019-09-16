@@ -31,7 +31,13 @@ $config->set("mysql.default", [
     'dsn'      => 'mysql:dbname=default;host=mysql;port=3306;charset=utf8',
     'username' => 'root',
     'password' => 'kfkdock',
-    'options'  => [\PDO::ATTR_PERSISTENT => true],
+    'options'  => [
+//        \PDO::ATTR_CASE              => \PDO::CASE_NATURAL,
+//        \PDO::ATTR_ERRMODE           => \PDO::ERRMODE_EXCEPTION,
+//        \PDO::ATTR_ORACLE_NULLS      => \PDO::NULL_NATURAL,
+//        \PDO::ATTR_STRINGIFY_FETCHES => false,
+//        \PDO::ATTR_EMULATE_PREPARES  => false,
+    ],
     'pool'     => [
         'min_connections' => 1,
         'max_connections' => 10,
