@@ -15,6 +15,8 @@ namespace sf\swoole;
 use Gene\Application;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\ApplicationContext;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use sf\Event;
 use sf\Log;
 use Swoole\Runtime;
@@ -73,9 +75,9 @@ class Http extends Server
 
         $this->event->bind($config->get('bind') ?? [])
             ->listenEvents($config->get('listener') ?? [])
-            ->trigger('swoole.Process',$this->swoole);
+            ->trigger('swoole.Process', $this->swoole);
 
-        $this->container->make(Application::class,$this->app);
+        $this->container->make(Application::class, $this->app);
 
         $this->log = $this->container->make(Log::class);
 
@@ -173,21 +175,30 @@ class Http extends Server
 
         if ($method == 'OPTIONS' || $uri == '/favicon.ico') {
             $response->status(40400);
+
             return $response->end(400);
         }
 
-        Context::set('request', Psr7Request::loadFromSwooleRequest($request));
-        Context::set('response', new Psr7Response($response));
+        Context::set(RequestInterface::class, Psr7Request::loadFromSwooleRequest($request));
+        Context::set(ResponseInterface::class, new Psr7Response($response));
 
-        \Gene\Request::init($request->get, $request->post, $request->cookie, $request->server, null, $request->files);
+        \Gene\Request::init(
+            $request->get,
+            $request->post,
+            $request->cookie,
+            $request->server,
+            ['fd' => $request->fd],
+            $request->files);
 
         try {
             $this->app->run($method, $uri);
         } catch (\Exception $exception) {
             $this->log->error($exception->getMessage());
+
             return $response->end(400);
         } catch (\Throwable $exception) {
             $this->log->error($exception->getMessage());
+
             return $response->end(400);
         }
     }

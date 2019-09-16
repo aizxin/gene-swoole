@@ -13,6 +13,8 @@
 namespace Controllers;
 
 use Hyperf\Utils\Context;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Controller extends \Gene\Controller
 {
@@ -21,8 +23,8 @@ class Controller extends \Gene\Controller
 
     public function __construct()
     {
-        $this->response = Context::get('response');
-        $this->request = Context::get('request');
+        $this->response = Context::get(ResponseInterface::class);
+        $this->request = Context::get(RequestInterface::class);
     }
 
     public function error401()
